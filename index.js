@@ -5,7 +5,6 @@ const app = express()
 require('dotenv').config()
 const port = process.env.PORT || 4000
 const ObjectId = require('mongodb').ObjectId
-const { query } = require('express')
 
 
 // testDB
@@ -27,11 +26,20 @@ const run = async () => {
       const database = client.db("exploreBangladesh")
       const placesCollection = database.collection("places")
 
+      // GET API for all places
       app.get('/places', async (req, res) => {
          const query = {}
          const cursor = placesCollection.find(query)
          const places = await cursor.toArray()
          res.send(places)
+      })
+
+      //GET API for a specific place
+      app.get('/places/:id', async (req, res) => {
+         const id = req.params.id
+         const query = {_id: ObjectId(id)}
+         const place = await placesCollection.findOne(query)
+         res.send(place)
       })
 
    } finally {
