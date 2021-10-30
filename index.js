@@ -26,6 +26,7 @@ const run = async () => {
       const database = client.db("exploreBangladesh")
       const placesCollection = database.collection("places")
       const usersCollection = database.collection("users")
+      const ordersCollection = database.collection("orders")
 
       // GET API for all places
       app.get('/places', async (req, res) => {
@@ -52,11 +53,35 @@ const run = async () => {
          res.send(user ? user : {} )
       })
 
+      // GET API for all the orders for a specific user has given
+      app.get('/orders/:email', async (req, res) => {
+         const email = req.params.email
+         const query = {email: email}
+         const cursor = ordersCollection.find(query)
+         const orders = await cursor.toArray()
+         res.send(orders)
+      })
+
       // POST API for each unique user
       app.post('/users', async (req, res) => {
          const user = req.body
          const result = await usersCollection.insertOne(user)
          console.log(result)
+         res.send(result)
+      })
+
+      // POST API for orders
+      app.post('/orders', async (req, res) => {
+         const order = req.body
+         const result = await ordersCollection.insertOne(order)
+         res.send(result)
+      })
+
+      // DELETE API for deleting an ordered item
+      app.delete('/orders/:id', async (req, res) => {
+         const id = req.params.id
+         const query = {_id: ObjectId(id)}
+         const result = await ordersCollection.deleteOne(query)
          res.send(result)
       })
 
