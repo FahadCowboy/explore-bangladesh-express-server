@@ -25,6 +25,7 @@ const run = async () => {
       await client.connect();
       const database = client.db("exploreBangladesh")
       const placesCollection = database.collection("places")
+      const usersCollection = database.collection("users")
 
       // GET API for all places
       app.get('/places', async (req, res) => {
@@ -40,6 +41,23 @@ const run = async () => {
          const query = {_id: ObjectId(id)}
          const place = await placesCollection.findOne(query)
          res.send(place)
+      })
+
+      // GET API for single user
+      app.get('/users/:email', async (req, res) => {
+         const email = req.params.email 
+         const query = {email: email}
+         const user = await usersCollection.findOne(query)
+         console.log(user)
+         res.send(user ? user : {} )
+      })
+
+      // POST API for each unique user
+      app.post('/users', async (req, res) => {
+         const user = req.body
+         const result = await usersCollection.insertOne(user)
+         console.log(result)
+         res.send(result)
       })
 
    } finally {
