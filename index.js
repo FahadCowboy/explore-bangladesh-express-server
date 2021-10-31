@@ -49,15 +49,21 @@ const run = async () => {
          const email = req.params.email 
          const query = {email: email}
          const user = await usersCollection.findOne(query)
-         console.log(user)
          res.send(user ? user : {} )
       })
 
       // GET API for all the orders for a specific user has given
-      app.get('/orders/:email', async (req, res) => {
+      app.get(`/orders/:email`, async (req, res) => {
          const email = req.params.email
          const query = {email: email}
          const cursor = ordersCollection.find(query)
+         const orders = await cursor.toArray()
+         res.send(orders)
+      })
+
+      // GET API for all the orders
+      app.get(`/orders`, async (req, res) => {
+         const cursor = ordersCollection.find({})
          const orders = await cursor.toArray()
          res.send(orders)
       })
@@ -66,7 +72,6 @@ const run = async () => {
       app.post('/users', async (req, res) => {
          const user = req.body
          const result = await usersCollection.insertOne(user)
-         console.log(result)
          res.send(result)
       })
 
@@ -77,8 +82,15 @@ const run = async () => {
          res.send(result)
       })
 
+      // POST API to add a neq place into places route
+      app.post('/places', async (req, res) => {
+         const place = req.body
+         const result = await placesCollection.insertOne(place)
+         res.send(result)
+      })
+
       // DELETE API for deleting an ordered item
-      app.delete('/orders/:id', async (req, res) => {
+      app.delete(`/orders/:id`, async (req, res) => {
          const id = req.params.id
          const query = {_id: ObjectId(id)}
          const result = await ordersCollection.deleteOne(query)
