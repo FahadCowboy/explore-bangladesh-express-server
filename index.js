@@ -79,6 +79,7 @@ const run = async () => {
       app.post('/orders', async (req, res) => {
          const order = req.body
          const result = await ordersCollection.insertOne(order)
+         cnsole.log('Api hitted by the request')
          res.send(result)
       })
 
@@ -94,6 +95,21 @@ const run = async () => {
          const id = req.params.id
          const query = {_id: ObjectId(id)}
          const result = await ordersCollection.deleteOne(query)
+         res.send(result)
+      })
+
+      // UPDATE API for a singe order
+      app.put('/orders/:id', async (req, res) => {
+         const id = req.params.id
+         const updatedOrder = req.body
+         const filter = {_id: ObjectId(id)}
+         const options = { upsert: false };
+         const updateDoc = {
+            $set: {
+               orderStatus: updatedOrder.orderStatus
+            },
+          };
+         const result = await ordersCollection.updateOne(filter, updateDoc, options)
          res.send(result)
       })
 
