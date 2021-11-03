@@ -54,6 +54,7 @@ const run = async () => {
 
       // GET API for all the orders for a specific user has given
       app.get(`/orders/:email`, async (req, res) => {
+         console.log(req.headers.authorization)
          const email = req.params.email
          const query = {email: email}
          const cursor = ordersCollection.find(query)
